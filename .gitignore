@@ -1,0 +1,4 @@
+# added node modules of backend in gitignore file 
+
+/backend/node_modules/
+.env
