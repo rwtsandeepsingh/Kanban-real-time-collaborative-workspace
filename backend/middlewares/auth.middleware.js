@@ -2,7 +2,6 @@ import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 
 export const protectRoute = async (req, res, next) => {
-  console.log(req.cookies);
   try {
     const token = req.cookies.jwt;
     if (!token) {
@@ -18,7 +17,7 @@ export const protectRoute = async (req, res, next) => {
       });
     }
 
-    console.log(decoded);
+    console.log(`decoded: ${decoded}`);
     const user = await User.findById(decoded.id).select("-password");
 
     if (!user) {

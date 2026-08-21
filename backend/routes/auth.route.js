@@ -10,7 +10,6 @@ router.post("/logout", logout);
 
 router.get("/me", protectRoute, (req, res) => {
   try {
-    console.log(req.user);
     res.status(200).json({
       success: true,
       user: req.user,
