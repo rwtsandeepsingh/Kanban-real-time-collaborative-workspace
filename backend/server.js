@@ -5,6 +5,7 @@ import { connectDB } from "./config/db.js";
 import cookieParser from "cookie-parser";
 import authRoute from "./routes/auth.route.js";
 import boardRoute from "./routes/board.route.js";
+import listRoute from "./routes/list.route.js";
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT;
@@ -13,7 +14,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoute);
 app.use("/api/board", boardRoute);
-
+app.use("/api/lists", listRoute);
 // Function expression
 const startServer = async () => {
   try {
