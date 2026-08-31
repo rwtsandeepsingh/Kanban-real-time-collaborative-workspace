@@ -1,6 +1,6 @@
 import List from "../models/list.js";
-import board from "../models/Board.js";
 import Board from "../models/Board.js";
+import Card from "../models/Card.js";
 export const createList = async (req, res) => {
   try {
     const { title, boardId } = req.body;
@@ -28,7 +28,7 @@ export const createList = async (req, res) => {
         .json({ message: "Not authorized to add lists to this board" });
     }
 
-    const listCount = List.countDocuments({ boardId });
+    const listCount = await List.countDocuments({ boardId });
     const position = listCount + 1;
 
     const list = await List.create({ title, boardId, position });
@@ -37,7 +37,7 @@ export const createList = async (req, res) => {
       list,
     });
   } catch (error) {
-    console.log(`error in create List ${error.message}`);
+    console.log(`error in createList ${error.message}`);
     return res.status(500).json({ message: "Internal server Error" });
   }
 };
@@ -123,9 +123,11 @@ export const deleteList = async (req, res) => {
 
     // TODO : CleanUp Card
 
-    const deletedList = await List.findOneAndDelete(listId);
+    // 1 delete all cards of this list
+    await Card.deleteMany({ listId });
+    const deletedList = await List.findByIdAndDelete(listId);
     res.status(200).json({
-      message: "List Deleted successfully",
+      message: "List and associated Deleted successfully",
       deletedList,
     });
   } catch (error) {

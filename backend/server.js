@@ -3,18 +3,21 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { connectDB } from "./config/db.js";
 import cookieParser from "cookie-parser";
-import authRoute from "./routes/auth.route.js";
-import boardRoute from "./routes/board.route.js";
-import listRoute from "./routes/list.route.js";
+import authRoutes from "./routes/auth.route.js";
+import boardRoutes from "./routes/board.route.js";
+import listRoutes from "./routes/list.route.js";
+import cardRoutes from "./routes/card.route.js";
+
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT;
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/api/auth", authRoute);
-app.use("/api/board", boardRoute);
-app.use("/api/lists", listRoute);
+app.use("/api/auth", authRoutes);
+app.use("/api/board", boardRoutes);
+app.use("/api/lists", listRoutes);
+app.use("/api/cards", cardRoutes);
 // Function expression
 const startServer = async () => {
   try {

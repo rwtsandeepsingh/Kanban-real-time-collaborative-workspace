@@ -1,4 +1,6 @@
 import Board from "../models/Board.js";
+import Card from "../models/Card.js";
+import List from "../models/list.js";
 
 export const createBoard = async (req, res) => {
   try {
@@ -77,7 +79,8 @@ export const deleteBoard = async (req, res) => {
         .status(403)
         .json({ message: "Not authorized to delete this board" });
     }
-
+    await Card.deleteMany({ id });
+    await List.deleteMany({ id });
     await board.deleteOne();
     res
       .status(200)
