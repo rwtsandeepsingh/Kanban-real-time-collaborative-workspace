@@ -44,7 +44,8 @@ export const signUp = async (req, res) => {
     res.cookie("jwt", jwtToken, {
       httpOnly: true, // Prevents client-side JS from reading the cookie
       sameSite: "lax", // Protects against CSRF attacks
-      secure: process.env.NODE_ENV == "production",
+      //secure: process.env.NODE_ENV == "production",
+      secure: process.env.NODE_ENV === "production",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
     });
 
@@ -70,7 +71,7 @@ export const login = async (req, res) => {
       res.cookie("jwt", jwtToken, {
         httpOnly: true, // Prevents client-side JS from reading the cookie
         sameSite: "lax", // Protects against CSRF attacks
-        secure: process.env.NODE_ENV == "production",
+        secure: process.env.NODE_ENV === "production",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
       });
 
@@ -91,6 +92,23 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  res.clearCookie("jwt");
-  res.status(200).json({ success: true, message: "Logout successfull" });
+  try {
+    // Clear cookie by matching origin flags
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    console.error("Error in logout controller:", error.message);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
 };

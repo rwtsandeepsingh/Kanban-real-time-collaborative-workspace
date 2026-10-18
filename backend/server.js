@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
+import cors from "cors";
 import { connectDB } from "./config/db.js";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.route.js";
@@ -11,6 +11,15 @@ import cardRoutes from "./routes/card.route.js";
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT;
+const corsOptions = {
+  origin: "http://localhost:5173", // Must NOT have a trailing slash
+  credentials: true, // Allows HTTP-only cookies
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+app.use(cors(corsOptions));
+
+// 2. Handle preflight requests for all routes
 app.use(express.json());
 app.use(cookieParser());
 
