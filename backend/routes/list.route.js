@@ -11,8 +11,8 @@ const router = express.Router();
 
 router.use(protectRoute);
 
-router.post("/", createList);
-router.get("/board/:boardId", getListByBoard);
+// router.post("/boards/:boardId/lists", createList);
+router.get("/boards/:boardId", getListByBoard);
 router.put("/:id", updateList);
 router.delete("/:id", deleteList);
 

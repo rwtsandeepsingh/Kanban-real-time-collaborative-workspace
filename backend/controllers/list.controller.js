@@ -31,10 +31,24 @@ export const createList = async (req, res) => {
     const listCount = await List.countDocuments({ boardId });
     const position = listCount + 1;
 
-    const list = await List.create({ title, boardId, position });
+    // 1. Create the new list object/subdocument
+    const newList = {
+      title,
+      cards: [],
+    };
+
+    // 2. Push into the board's lists array
+    board.lists.push(newList);
+    await board.save();
+
+    // 3. Return the newly created list (or updated board)
+    const createdList = board.lists[board.lists.length - 1];
+
     res.status(201).json({
-      message: "List created Successfully",
-      list,
+      success: true,
+      message: "List created successfully",
+      list: createdList,
+      board,
     });
   } catch (error) {
     console.log(`error in createList ${error.message}`);

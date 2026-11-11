@@ -2,30 +2,51 @@ import Board from "../models/Board.js";
 import Card from "../models/Card.js";
 export const createCard = async (req, res) => {
   try {
-    const { title, description, listId, boardId } = req.body;
-    if (!title || !listId || !boardId) {
-      return res.status(400).json({
-        message: "All fields are required",
-      });
-    }
-    const cardCount = await Card.countDocuments({ listId });
-    const position = cardCount + 1;
+    const { boardId, listId } = req.params;
+    const { title, description, priority } = req.body;
 
-    const myCard = await Card.create({
+    if (!title) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Card title is required" });
+    }
+
+    const board = await Board.findById(boardId);
+    if (!board) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Board not found" });
+    }
+
+    const list = board.lists.find((l) => l._id.toString() === listId);
+    if (!list) {
+      return res
+        .status(404)
+        .json({ success: false, message: "List not found in board" });
+    }
+
+    // 1. Create the new card document
+    const newCard = await Card.create({
       title,
-      description,
-      listId,
+      description: description || "",
+      priority: priority || "medium",
       boardId,
-      position,
+      listId,
     });
+
+    // 2. Push the new card's ID into the list's cards array
+    list.cards.push(newCard._id);
+
+    // 3. Save the parent board document
+    await board.save();
 
     res.status(201).json({
       success: true,
-      myCard,
+      message: "Card created successfully",
+      card: newCard,
     });
   } catch (error) {
-    console.log(`Error happend in Create card component ${error.message}`);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 

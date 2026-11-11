@@ -2,13 +2,7 @@ import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { useUser } from "./hooks/useAuth";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-
-function Dashboard() {
-  return (
-    <div className="p-8 text-white bg-slate-900 h-screen">Dashboard Page</div>
-  );
-}
-
+import Dashboard from "./pages/DashBoard";
 function ProtectedRoute() {
   const { data: user, isLoading } = useUser();
 

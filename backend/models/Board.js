@@ -8,6 +8,12 @@ const boardSchema = mongoose.Schema(
       trim: true,
     },
 
+    description: {
+      type: String,
+      required: [true, "Board description is required"],
+      trim: true,
+    },
+
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -19,6 +25,12 @@ const boardSchema = mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+      },
+    ],
+    lists: [
+      {
+        title: { type: String, required: true },
+        cards: [{ type: mongoose.Schema.Types.ObjectId, ref: "Card" }], // or subdocument schema
       },
     ],
   },

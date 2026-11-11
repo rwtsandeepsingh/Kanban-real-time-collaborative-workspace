@@ -4,15 +4,21 @@ import List from "../models/list.js";
 
 export const createBoard = async (req, res) => {
   try {
-    const { title, members } = req.body;
+    const { title, members, description } = req.body;
     if (!title) {
       return res.status(400).json({ message: "Title required" }); // 400 Bad request
     }
 
     const board1 = await Board.create({
       title,
+      description,
       owner: req.user._id, // verified owner by jwt
       members: members || [], // Optional collaborators list
+      lists: [
+        { title: "To Do", cards: [] },
+        { title: "In Progress", cards: [] },
+        { title: "Done", cards: [] },
+      ],
     });
 
     res.status(201).json({
@@ -50,7 +56,9 @@ export const getBoardById = async (req, res) => {
       return res.status(400).json({ message: "Board id not found" });
     }
 
-    const board = await Board.findById(id);
+    const board = await Board.findById(id).populate({
+      path: "lists.cards",
+    });
     if (!board) {
       return res.status(404).json({ message: "board not found" });
     }
@@ -88,5 +96,43 @@ export const deleteBoard = async (req, res) => {
   } catch (error) {
     console.log(`error happened in deleteBoard: ${error.message}`);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// PUT /api/boards/:boardId
+export const updateBoard = async (req, res) => {
+  try {
+    const { boardId } = req.params;
+    const { title, description } = req.body;
+
+    // Find the board and ensure the logged-in user is the owner or member
+    const board = await Board.findById(boardId);
+
+    if (!board) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Board not found" });
+    }
+
+    // Optional: Check if user owns the board
+    if (board.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to update this board",
+      });
+    }
+
+    if (title) board.title = title;
+    if (description !== undefined) board.description = description;
+
+    await board.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Board updated successfully",
+      board,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };

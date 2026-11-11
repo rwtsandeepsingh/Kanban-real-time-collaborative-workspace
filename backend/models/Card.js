@@ -11,16 +11,17 @@ const cardSchema = mongoose.Schema(
       type: String,
       default: "",
     },
-    listId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "List",
-      required: true,
-    },
     boardId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Board",
       required: true,
     },
+    listId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "List",
+      required: true,
+    },
+
     position: {
       type: Number,
       required: true,

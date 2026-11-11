@@ -14,6 +14,13 @@ const listSchema = mongoose.Schema(
       required: [true, "Board id is required"],
     },
 
+    cards: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Card",
+      },
+    ],
+
     position: {
       type: Number,
       default: 0,
