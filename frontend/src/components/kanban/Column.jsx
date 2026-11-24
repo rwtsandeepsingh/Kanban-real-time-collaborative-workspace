@@ -78,7 +78,7 @@ export default function Column({ list, boardId }) {
         }}
       </Droppable>
       {/* Add Card Form or Button */}
-      <div className=" mt-auto border-t border-slate-800/60 pt-3">
+      <div className=" border-t border-slate-800/60 pt-3">
         {isAddingCard ? (
           <form onSubmit={handleAddCard} className="space-y-2">
             <input
