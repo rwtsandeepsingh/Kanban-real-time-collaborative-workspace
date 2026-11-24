@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Droppable } from "@hello-pangea/dnd";
 import TaskCard from "./TaskCard";
 import { useCreateCard } from "../../hooks/useCards";
 import { useDeleteList } from "../../hooks/useBoards";
@@ -27,7 +28,7 @@ export default function Column({ list, boardId }) {
   };
 
   return (
-    <div className="flex h-full w-80 shrink-0 flex-col rounded-2xl border border-slate-800/80 bg-slate-900/60 p-4 backdrop-blur-sm">
+    <div className="flex h-full w-80 shrink-0 flex-col rounded-2xl border border-slate-800/80 bg-slate-900/60 p-4">
       {/* Column Header */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -46,20 +47,38 @@ export default function Column({ list, boardId }) {
       </div>
 
       {/* Task Cards Stack (Scrollable) */}
-      <div className="flex-1 space-y-3 overflow-y-auto pr-1">
-        {list.cards && list.cards.length > 0 ? (
-          list.cards.map((card) => (
-            <TaskCard key={card._id} card={card} boardId={boardId} />
-          ))
-        ) : (
-          <div className="py-4 text-center text-xs text-slate-500">
-            No tasks yet. Add one below!
-          </div>
-        )}
-      </div>
-
+      <Droppable droppableId={String(list._id)}>
+        {(provided, snapshot) => {
+          return (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className={`flex min-h-20 flex-col  p-3 transition-colors ${
+                snapshot.isDraggingOver ? "bg-indigo-950/20" : "bg-transparent"
+              }`}
+            >
+              {list.cards && list.cards.length > 0 ? (
+                list.cards.map((card, index) => (
+                  // We will wrap TaskCard with Draggable in the next step
+                  <TaskCard
+                    key={card._id}
+                    card={card}
+                    boardId={boardId}
+                    index={index}
+                  />
+                ))
+              ) : (
+                <div className="flex h-20 items-center justify-center rounded-xl border border-dashed border-slate-800/60 text-xs text-slate-500">
+                  No tasks yet
+                </div>
+              )}
+              {provided.placeholder}
+            </div>
+          );
+        }}
+      </Droppable>
       {/* Add Card Form or Button */}
-      <div className="mt-4 border-t border-slate-800/60 pt-3">
+      <div className=" mt-auto border-t border-slate-800/60 pt-3">
         {isAddingCard ? (
           <form onSubmit={handleAddCard} className="space-y-2">
             <input

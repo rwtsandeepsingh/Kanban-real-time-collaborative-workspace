@@ -22,7 +22,7 @@ export default function Dashboard() {
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Navbar />
-        <main className="flex-1 overflow-x-auto overflow-y-hidden p-6">
+        <main className="flex-1 p-6">
           {selectedBoardId ? (
             <Workspace />
           ) : (
